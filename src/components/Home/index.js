@@ -12,7 +12,7 @@ const Home = () => {
     const [weather, setWeather] = useState([]);
     const [loader, setLoader] = useState(false);
 
-    const key = process.env.KEY;
+    const key = process.env.REACT_APP_API_KEY;
 
     const getLattitude = async (e) => {
         e.preventDefault();
