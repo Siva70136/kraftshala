@@ -12,6 +12,7 @@ const Home = () => {
     const [weather, setWeather] = useState([]);
     const [loader, setLoader] = useState(false);
     const [error, setError] = useState('');
+    const [theme,setTheme]=useState("light");
     const key = process.env.REACT_APP_API_KEY;
 
     const getLattitude = async (e) => {
@@ -26,7 +27,7 @@ const Home = () => {
                 const url = `https://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=${key}&units=metric`;
                 const response = await fetch(url);
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
                 if (data.cod !== '404') {
                     const timestamp = data.dt;
                     const date = new Date(timestamp * 1000);
@@ -63,16 +64,26 @@ const Home = () => {
         }
     }
 
+    const onTheme=()=>{
+        //console.log(theme !=="light");
+        if(theme ==="light"){
+            setTheme("dark");
+        }
+        else{
+            setTheme("light");
+        }
+    }
 
     return (
         <div className="main-container">
-            <div className="app-container">
+            <div className={`app-container ${theme}`}>
                 <form className="">
                     <div className="">
                         <p className="head">Location</p>
                         <input type="text" placeholder="Enter City Names using comma separated" className="input-field" value={city} onChange={e => { setCity(e.target.value) }} />
                     </div>
                     <p className="error">{error}</p>
+                    <button type="button" className="theme" onClick={onTheme}>{theme==="light"?"Dark":"Light"}</button>
                     <button className="" onClick={e => { getLattitude(e) }}>Enter</button>
                 </form>
             </div>
