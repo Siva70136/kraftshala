@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ThreeDots} from 'react-loader-spinner';
+import { ThreeDots } from 'react-loader-spinner';
 import { CiTempHigh } from "react-icons/ci";
 import { WiHumidity } from "react-icons/wi";
 import { GiWindSlap } from "react-icons/gi";
@@ -11,7 +11,7 @@ const Home = () => {
     const [city, setCity] = useState('');
     const [weather, setWeather] = useState([]);
     const [loader, setLoader] = useState(false);
-
+    const [error, setError] = useState('');
     const key = process.env.REACT_APP_API_KEY;
 
     const getLattitude = async (e) => {
@@ -20,33 +20,47 @@ const Home = () => {
         var cities = city.split(',');
         //console.log(key);
         var i = 0;
-        while (i < cities.length) {
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=${key}&units=metric`;
-    
-            const response = await fetch(url);
-            const data = await response.json();
-            const timestamp = data.dt;
-            const date = new Date(timestamp * 1000);
-            const month = date.toLocaleString('default', { month: 'long' });
-            const day = date.getDate();
-            const year = date.getFullYear();
-            //console.log(data);
-            const item = {
-                "Name": data.name,
-                "Temp": `${Math.round(data.main.temp)}°C`,
-                "Desc": data.weather[0].description,
-                "WindSpeed": data.wind.speed,
-                "Humidity": data.main.humidity,
-                "Date": `${month} | ${day} | ${year}`
-    
+        try {
+
+            while (i < cities.length) {
+                const url = `https://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=${key}&units=metric`;
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log(data);
+                if (data.cod !== '404') {
+                    const timestamp = data.dt;
+                    const date = new Date(timestamp * 1000);
+                    const month = date.toLocaleString('default', { month: 'long' });
+                    const day = date.getDate();
+                    const year = date.getFullYear();
+                    const hours = date.getHours();
+                    const minutes = date.getMinutes();
+                    const formattedHours = hours < 10 ? '0' + hours : hours;
+                    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+                    const item = {
+                        "Name": data.name,
+                        "Temp": `${Math.round(data.main.temp)}°C`,
+                        "Desc": data.weather[0].description,
+                        "WindSpeed": data.wind.speed,
+                        "Humidity": data.main.humidity,
+                        "Date": `${month} | ${day} | ${year} | ${formattedHours}:${formattedMinutes}`
+
+                    }
+                    //console.log(item);
+                    setWeather(prevWeather => [...prevWeather, item]);
+                    setCity('');
+                    i++;
+                }
+                else{
+                    setError(data.message);
+                }
+                setLoader(false);
             }
-            //console.log(item);
-            setWeather(prevWeather => [...prevWeather, item]);
-            setCity('');
-            i++;
-            
+
         }
-        setLoader(false);
+        catch (e) {
+            setError(e);
+        }
     }
 
 
@@ -58,18 +72,19 @@ const Home = () => {
                         <p className="head">Location</p>
                         <input type="text" placeholder="Enter City Names using comma separated" className="input-field" value={city} onChange={e => { setCity(e.target.value) }} />
                     </div>
+                    <p className="error">{error}</p>
                     <button className="" onClick={e => { getLattitude(e) }}>Enter</button>
                 </form>
             </div>
             <div className="cards-container">
                 {loader && (
-                     <div className="loader-container" data-testid="loader">
-                     <ThreeDots color="rgb(35, 195, 248)" height="50" width="50" />
-                   </div>
-                )} 
+                    <div className="loader-container" data-testid="loader">
+                        <ThreeDots color="rgb(35, 195, 248)" height="50" width="50" />
+                    </div>
+                )}
             </div>
             <div className="cards-container">
-                {weather.length !== 0 &&  (
+                {weather.length !== 0 && (
                     weather.map((each, index) => {
                         return (
                             <div key={index} className="card">

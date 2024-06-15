@@ -26,6 +26,13 @@
     line-height: 2px;
     font-style: italic;
 }
+.error{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 2px;
+    font-style: italic;
+}
 
 .input-field {
     width: 97%;
@@ -49,12 +56,12 @@ button {
 .cards-container {
     display: flex;
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 30px;
     
 }
 
 .card {
-    background-image: url('../../images/night.png');
+    background-image: url('../../assets/images/night.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
