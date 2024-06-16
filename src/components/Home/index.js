@@ -17,16 +17,18 @@ const Home = () => {
 
     const getLattitude = async (e) => {
         e.preventDefault();
+        
         setLoader(true);
         var cities = city.split(',');
         //console.log(key);
         var i = 0;
         try {
+           
             while (i < cities.length) {
                 const url = `https://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=${key}&units=metric`;
                 const response = await fetch(url);
                 const data = await response.json();
-                //console.log(data);
+                console.log(data);
                 if (data.cod !== '404') {
                     const timestamp = data.dt;
                     const date = new Date(timestamp * 1000);
@@ -48,12 +50,15 @@ const Home = () => {
                     }
                     //console.log(item);
                     setWeather(prevWeather => [...prevWeather, item]);
-                    setCity('');
-                    i++;
+                    setError(' ');
+                    
                 }
                 else{
                     setError(data.message);
+                    
                 }
+                setCity('');
+                i++;
                 setLoader(false);
             }
 
